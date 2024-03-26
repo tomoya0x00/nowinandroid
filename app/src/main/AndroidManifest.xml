@@ -51,6 +51,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".feature.foryou.SubActivity"
+            android:exported="false"
+            android:label="SubActivity"
+            android:theme="@style/Theme.Nia"/>
+
         <!-- Disable Firebase analytics by default. This setting is overwritten for the `prod`
         flavor -->
         <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />

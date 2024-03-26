@@ -8,7 +8,8 @@ androidxActivity = "1.8.0"
 androidxAppCompat = "1.6.1"
 androidxBrowser = "1.8.0"
 androidxComposeBom = "2024.02.02"
-androidxComposeCompiler = "1.5.8"
+# androidxComposeCompiler = "1.5.8"
+androidxComposeCompiler = "1.5.9"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha08"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxCore = "1.12.0"
@@ -149,6 +150,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 work-testing = { group = "androidx.work", name = "work-testing", version = "2.9.0" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

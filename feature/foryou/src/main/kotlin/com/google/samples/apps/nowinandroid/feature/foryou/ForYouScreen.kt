@@ -16,6 +16,7 @@
 
 package com.google.samples.apps.nowinandroid.feature.foryou
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -46,7 +47,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -65,6 +68,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -104,6 +110,7 @@ import com.google.samples.apps.nowinandroid.core.ui.TrackScrollJank
 import com.google.samples.apps.nowinandroid.core.ui.UserNewsResourcePreviewParameterProvider
 import com.google.samples.apps.nowinandroid.core.ui.launchCustomChromeTab
 import com.google.samples.apps.nowinandroid.core.ui.newsFeed
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun ForYouRoute(
@@ -115,6 +122,52 @@ internal fun ForYouRoute(
     val feedState by viewModel.feedState.collectAsStateWithLifecycle()
     val isSyncing by viewModel.isSyncing.collectAsStateWithLifecycle()
     val deepLinkedUserNewsResource by viewModel.deepLinkedNewsResource.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val intent = Intent(context, SubActivity::class.java)
+
+    LaunchedEffect(Unit) {
+        delay(3000)
+        context.startActivity(intent)
+    }
+
+    var surfaceVisibility by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(1000)
+        surfaceVisibility = true
+    }
+
+    if (surfaceVisibility) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            var lazyColumnVisibility by remember { mutableStateOf(true) }
+            LaunchedEffect(Unit) {
+                delay(1000)
+                lazyColumnVisibility = true
+            }
+
+            if (lazyColumnVisibility) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    items(20) {
+                        LazyRow {
+                            items(20) {
+                                Column(modifier = Modifier.size(50.dp)) {
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(text = "test")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return
 
     ForYouScreen(
         isSyncing = isSyncing,
