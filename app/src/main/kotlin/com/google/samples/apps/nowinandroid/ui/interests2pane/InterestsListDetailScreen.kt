@@ -144,6 +144,11 @@ internal fun InterestsListDetailScreen(
     val mutableInteractionSource = remember { MutableInteractionSource() }
     val minPaneWidth = 300.dp
 
+    /*
+    ListDetailPaneScaffold(
+        directive = listDetailNavigator.scaffoldDirective,
+        scaffoldState = listDetailNavigator.scaffoldState,
+     */
     NavigableListDetailPaneScaffold(
         navigator = listDetailNavigator,
         listPane = {
