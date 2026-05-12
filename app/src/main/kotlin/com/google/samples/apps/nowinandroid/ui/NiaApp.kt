@@ -16,6 +16,8 @@
 
 package com.google.samples.apps.nowinandroid.ui
 
+import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -55,11 +57,15 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -158,6 +164,14 @@ internal fun NiaApp(
     val snackbarHostState = LocalSnackbarHostState.current
 
     val navigator = remember { Navigator(appState.navigationState) }
+
+    val configuration = LocalConfiguration.current
+    val containerSize =
+        with(LocalDensity.current) { LocalWindowInfo.current.containerSize.toSize().toDpSize() }
+
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    Log.d("DBG", "isLandscape: $isLandscape, configurationScreenSize: ${configuration.screenWidthDp} x ${configuration.screenHeightDp}, containerSize: ${containerSize.width} x ${containerSize.height}")
 
     NiaNavigationSuiteScaffold(
         navigationSuiteItems = {
