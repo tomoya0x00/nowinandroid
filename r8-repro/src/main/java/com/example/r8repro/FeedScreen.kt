@@ -1,5 +1,6 @@
 package com.example.r8repro
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -63,16 +64,25 @@ fun FeedScreen(
             .collectLatest { topBarState.collapse() }
     }
 
+    // State read in this function's own body (not inside a content lambda): changing it
+    // recomposes FeedScreen, which calls FeedContent again with "Same" flags for every
+    // unchanged argument.
+    val parentTick = state.parentTick
+    Log.i(TAG, "FeedScreen composed, parentTick=$parentTick")
+
     Column(modifier = modifier) {
-        // State read that only this composable observes: changing it recomposes FeedScreen,
-        // which calls FeedContent again with "Same" flags for every unchanged argument.
         Button(
             modifier = Modifier.padding(8.dp).testTag("recomposeParent"),
             onClick = { state.parentTick++ },
-        ) { Text("Recompose parent (${state.parentTick})") }
+        ) { Text("Recompose parent ($parentTick)") }
 
         FeedContent(
-            modifier = Modifier.onFocusChanged { hasFocus = it.hasFocus },
+            // A new Modifier on each parent recomposition, so FeedContent does not skip: it runs
+            // with "Different" for `modifier` and "Same" for every other argument, and its
+            // restart lambda captures those flags.
+            modifier = Modifier
+                .onFocusChanged { hasFocus = it.hasFocus }
+                .padding(top = (parentTick % 2).dp),
             state = state,
             topBarState = topBarState,
             lazyListState = lazyListState,

@@ -51,6 +51,7 @@ fun FeedContent(
     onHistoryDetailClick: OnHistoryClick,
     onHistoryDeleteClick: OnHistoryClick,
     onHistoryMenuClick: OnHistoryClick,
+    onOpenLink: (url: String, title: String) -> Unit,
     onHistoryMoreClick: () -> Unit,
     onHistoryMoreCardClick: () -> Unit,
     onTopicClick: (IndexedValue<Topic>) -> Unit,
@@ -60,7 +61,6 @@ fun FeedContent(
     onDailyTipClick: () -> Unit,
     onTutorialBannerClick: () -> Unit,
     onTutorialBannerDismiss: () -> Unit,
-    onOpenLink: (url: String, title: String) -> Unit,
 ) {
     val rowState = rememberLazyListState()
     val context = LocalContext.current
