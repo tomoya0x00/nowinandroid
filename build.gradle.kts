@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
+// r8-repro (see R8_REPRO.md): `-Dr8repro.r8=<version>` replaces the R8 bundled with AGP,
+// e.g. -Dr8repro.r8=9.5.33. Without the property the bundled R8 is used.
+buildscript {
+    val r8Override: String? = System.getProperty("r8repro.r8")
+    if (r8Override != null) {
+        repositories {
+            maven("https://storage.googleapis.com/r8-releases/raw")
+        }
+        dependencies {
+            classpath("com.android.tools:r8:$r8Override")
+        }
+    }
+}
+
 /*
  * By listing all the plugins used throughout all subprojects in the root project build script, it
  * ensures that the build script classpath remains the same for all projects. This avoids potential
