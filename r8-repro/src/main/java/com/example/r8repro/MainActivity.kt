@@ -25,65 +25,66 @@ class MainActivity : ComponentActivity() {
 /**
  * Callbacks built outside composition. Reading them as properties gives the Compose compiler
  * no static information, so the changed flags passed further down are computed at runtime
- * (as in a real app whose callbacks come from navigation), not folded into constants.
+ * instead of being folded into constants. With compile-time-static lambdas here, R8 folds the
+ * flags and the byte field does not appear.
  */
 class FeedCallbacks(private val tag: String) {
     private fun log(msg: String) {
         Log.i(tag, msg)
     }
 
-    val onItemClick: (FeedItem, Int, FeedSection, List<FeedItem>) -> Unit = { item, _, _, _ -> log("item ${item.id}") }
-    val onItemPreviewClick: (FeedItem, Int, FeedSection) -> Unit = { item, _, _ -> log("preview ${item.id}") }
-    val onMoreClick: (FeedSection) -> Unit = { log("more ${it.id}") }
-    val onMoreCardClick: (Int, FeedSection) -> Unit = { p, _ -> log("more card $p") }
-    val onTabSelect: (Int, FeedSection) -> Unit = { p, _ -> log("tab $p") }
-    val onHistoryInfoClick = OnHistoryClick { item, _ -> log("history info ${item.id}") }
-    val onHistoryImageClick = OnHistoryClick { item, _ -> log("history image ${item.id}") }
-    val onHistoryDetailClick = OnHistoryClick { item, _ -> log("history detail ${item.id}") }
-    val onHistoryDeleteClick = OnHistoryClick { item, _ -> log("history delete ${item.id}") }
-    val onHistoryMenuClick = OnHistoryClick { item, _ -> log("history menu ${item.id}") }
-    val onHistoryMoreClick: () -> Unit = { log("history more") }
-    val onHistoryMoreCardClick: () -> Unit = { log("history more card") }
-    val onTopicClick: (IndexedValue<Topic>) -> Unit = { log("topic ${it.value.name}") }
-    val onCategoryClick: (IndexedValue<Category>) -> Unit = { log("category ${it.value.name}") }
-    val onSpotlightClick = OnSpotlightClick { s, p -> log("spotlight ${s.id} $p") }
-    val onBannerClick = OnBannerClick { log("banner $it") }
-    val onDailyTipClick: () -> Unit = { log("daily tip") }
-    val onTutorialBannerClick: () -> Unit = { log("tutorial") }
-    val onTutorialBannerDismiss: () -> Unit = { log("tutorial dismiss") }
+    val onCardTap: (FeedItem, Int, FeedSection, List<FeedItem>) -> Unit = { item, _, _, _ -> log("card ${item.id}") }
+    val onCardLongPress: (FeedItem, Int, FeedSection) -> Unit = { item, _, _ -> log("long press ${item.id}") }
+    val onSectionTitleTap: (FeedSection) -> Unit = { log("section ${it.id}") }
+    val onSeeAllTap: (Int, FeedSection) -> Unit = { p, _ -> log("see all $p") }
+    val onChipSelect: (Int, FeedSection) -> Unit = { p, _ -> log("chip $p") }
+    val onRecentOpen = OnRecentTap { item, _ -> log("recent open ${item.id}") }
+    val onRecentShare = OnRecentTap { item, _ -> log("recent share ${item.id}") }
+    val onRecentPin = OnRecentTap { item, _ -> log("recent pin ${item.id}") }
+    val onRecentRemove = OnRecentTap { item, _ -> log("recent remove ${item.id}") }
+    val onRecentReport = OnRecentTap { item, _ -> log("recent report ${item.id}") }
+    val onRecentClear: () -> Unit = { log("recent clear") }
+    val onRecentRefresh: () -> Unit = { log("recent refresh") }
+    val onTagTap: (IndexedValue<Tag>) -> Unit = { log("tag ${it.value.name}") }
+    val onAuthorTap: (IndexedValue<Author>) -> Unit = { log("author ${it.value.name}") }
+    val onHighlightTap = OnHighlightTap { s, p -> log("highlight ${s.id} $p") }
+    val onPromoTap = OnPromoTap { log("promo $it") }
+    val onHelpTap: () -> Unit = { log("help") }
+    val onTipTap: () -> Unit = { log("tip") }
+    val onTipDismiss: () -> Unit = { log("tip dismiss") }
     val onOpenLink: (String, String) -> Unit = { url, title -> log("open $url $title") }
 }
 
 @Composable
 fun FeedRoute(callbacks: FeedCallbacks) {
     val state = remember { FeedState() }
-    val topBarState = remember { TopBarStateImpl() }
+    val headerState = remember { FixedHeaderState("Feed") }
     val snackbarHostState = remember { SnackbarHostState() }
 
     FeedScreen(
         state = state,
-        topBarState = topBarState,
+        headerState = headerState,
         snackbarHostState = snackbarHostState,
         nestedScrollConnection = null,
-        onItemClick = callbacks.onItemClick,
-        onItemPreviewClick = callbacks.onItemPreviewClick,
-        onMoreClick = callbacks.onMoreClick,
-        onMoreCardClick = callbacks.onMoreCardClick,
-        onTabSelect = callbacks.onTabSelect,
-        onHistoryInfoClick = callbacks.onHistoryInfoClick,
-        onHistoryImageClick = callbacks.onHistoryImageClick,
-        onHistoryDetailClick = callbacks.onHistoryDetailClick,
-        onHistoryDeleteClick = callbacks.onHistoryDeleteClick,
-        onHistoryMenuClick = callbacks.onHistoryMenuClick,
-        onHistoryMoreClick = callbacks.onHistoryMoreClick,
-        onHistoryMoreCardClick = callbacks.onHistoryMoreCardClick,
-        onTopicClick = callbacks.onTopicClick,
-        onCategoryClick = callbacks.onCategoryClick,
-        onSpotlightClick = callbacks.onSpotlightClick,
-        onBannerClick = callbacks.onBannerClick,
-        onDailyTipClick = callbacks.onDailyTipClick,
-        onTutorialBannerClick = callbacks.onTutorialBannerClick,
-        onTutorialBannerDismiss = callbacks.onTutorialBannerDismiss,
+        onCardTap = callbacks.onCardTap,
+        onCardLongPress = callbacks.onCardLongPress,
+        onSectionTitleTap = callbacks.onSectionTitleTap,
+        onSeeAllTap = callbacks.onSeeAllTap,
+        onChipSelect = callbacks.onChipSelect,
+        onRecentOpen = callbacks.onRecentOpen,
+        onRecentShare = callbacks.onRecentShare,
+        onRecentPin = callbacks.onRecentPin,
+        onRecentRemove = callbacks.onRecentRemove,
+        onRecentReport = callbacks.onRecentReport,
+        onRecentClear = callbacks.onRecentClear,
+        onRecentRefresh = callbacks.onRecentRefresh,
+        onTagTap = callbacks.onTagTap,
+        onAuthorTap = callbacks.onAuthorTap,
+        onHighlightTap = callbacks.onHighlightTap,
+        onPromoTap = callbacks.onPromoTap,
+        onHelpTap = callbacks.onHelpTap,
+        onTipTap = callbacks.onTipTap,
+        onTipDismiss = callbacks.onTipDismiss,
         onOpenLink = callbacks.onOpenLink,
     )
 }

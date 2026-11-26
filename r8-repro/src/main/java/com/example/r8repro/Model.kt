@@ -14,24 +14,24 @@ data class FeedItem(val id: Int, val title: String)
 data class FeedSection(val id: Int, val name: String, val items: List<FeedItem>)
 
 @Immutable
-data class Topic(val name: String)
+data class Tag(val name: String)
 
 @Immutable
-data class Category(val name: String)
+data class Author(val name: String)
 
-fun interface OnHistoryClick {
-    fun onClick(item: FeedItem, position: Int)
+fun interface OnRecentTap {
+    fun onTap(item: FeedItem, position: Int)
 }
 
-fun interface OnSpotlightClick {
-    fun onClick(section: FeedSection, position: Int)
+fun interface OnHighlightTap {
+    fun onTap(section: FeedSection, position: Int)
 }
 
-fun interface OnBannerClick {
-    fun onClick(url: String)
+fun interface OnPromoTap {
+    fun onTap(url: String)
 }
 
-/** Screen state holder, standing in for a ViewModel. */
+/** Screen state holder. */
 @Stable
 class FeedState {
     val sections: List<FeedSection> = List(3) { s ->
@@ -44,19 +44,12 @@ class FeedState {
     /** Read only inside [FeedScreen]: bumping it recomposes the parent. */
     var parentTick by mutableIntStateOf(0)
 
-    val onBannerShown = MutableSharedFlow<Unit>()
+    val openEvents = MutableSharedFlow<Unit>()
 }
 
 @Stable
-interface TopBarState {
-    val collapsed: Boolean
-    fun collapse()
+interface HeaderState {
+    val title: String
 }
 
-class TopBarStateImpl : TopBarState {
-    private var _collapsed by mutableIntStateOf(0)
-    override val collapsed: Boolean get() = _collapsed != 0
-    override fun collapse() {
-        _collapsed = 1
-    }
-}
+class FixedHeaderState(override val title: String) : HeaderState
